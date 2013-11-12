@@ -65,7 +65,8 @@ module Mux_N_Mbit(Select, inData, outData);
    /***************************************************************************************/
    always @(*)
    begin
-	outData <= ( inData >> (Select * `REG_WIDTH) ) && 32'hFFFFFFFF;
+	outData = inData[Select * `REG_WIDTH +: `REG_WIDTH];
+	//outData <= ( inData >> (Select * `REG_WIDTH) ) && 32'hFFFFFFFF;
    end
    
 endmodule // Mux_N_Mbit
@@ -133,7 +134,24 @@ module S_regFile(Clk, SrcRegA, SrcRegB, DestReg, WriteData, WE, DataA, DataB);
    *  DataA : output port with contents of register specified by "SrcRegA"           *
    *  DataB : output port with contents of register specified by "SrcRegB"           *
    ***********************************************************************************/ 
-
+	wire [`NUM_REGS-1:0] weDemuxed;
+	//wire [`REG_WIDTH-1:0] regOutputs[`NUM_REGS-1:0];
+	wire [`NUM_BITS-1:0] regOutputs;
+	
+	DeMux_N_1bit demux1(DestReg, WE, weDemuxed);
+	
+	//make the register bank
+	genvar i;
+	generate
+		for (i=0; i < `NUM_REGS; i = i + 1)
+		begin : regBank
+		//Nbit_Reg register(Clk, wEnable, WriteData, regOutputs[i]);
+		Nbit_Reg register(Clk, wEnable, WriteData, regOutputs[`REG_WIDTH * i +:`REG_WIDTH]);
+		end
+	endgenerate
+	
+	Mux_N_Mbit muxA(SrcRegA, regOutputs, DataA);
+	Mux_N_Mbit muxB(SrcRegB, regOutputs, DataB);
 
 endmodule // regFile_S
 
