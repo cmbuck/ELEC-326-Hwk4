@@ -15,7 +15,7 @@ module processor_TestBench;
    integer     i = 0, j = 0;
    
    
-   B_regFile  myRegFile(Clk, ReadRegisterA, ReadRegisterB, WriteRegister, WriteData, RegWriteEnable, ReadDataA, ReadDataB);
+   S_regFile  myRegFile(Clk, ReadRegisterA, ReadRegisterB, WriteRegister, WriteData, RegWriteEnable, ReadDataA, ReadDataB);
 
    initial begin
       Clk = 1;

@@ -39,6 +39,11 @@ module   DeMux_N_1bit(Select, inData, outData);
    *           should be  set to 0                                                        *
    /**************************************************************************************/
    
+   always @(*)
+   begin
+	outData = (inData << Select);
+   end
+   
 endmodule // DeMux_N_1bit
 
 
@@ -58,6 +63,11 @@ module Mux_N_Mbit(Select, inData, outData);
    *  Output Port:                                                                        * 
    *  outData: consits of the REG_WIDTH bits of the register specified by "Select"        *
    /***************************************************************************************/
+   always @(*)
+   begin
+	outData <= ( inData >> (Select * `REG_WIDTH) ) && 32'hFFFFFFFF;
+   end
+   
 endmodule // Mux_N_Mbit
 
 module Nbit_Reg(Clk,  wEnable, wData, outVal);
@@ -81,7 +91,15 @@ output [`REG_WIDTH-1:0] outVal;
    * Output Ports:                                                                   *
    * outVal : Ccontents of register                                                  *
    ***********************************************************************************/ 
-
+	
+	genvar i;
+		generate
+			for (i=0; i < `REG_WIDTH; i = i + 1)
+			begin : george
+			BIT_REG steve(Clk, wEnable, wData[i], outVal[i]);
+			end
+		endgenerate
+	
 endmodule // Nbit_Reg
 
 
