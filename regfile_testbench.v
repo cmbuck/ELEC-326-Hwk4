@@ -27,8 +27,8 @@ module processor_TestBench;
       ReadRegisterA = 0;
       ReadRegisterB = `NUM_REGS-1;
 	  
-	  $dumpfile("test.vcd");
-	  $dumpvars(0,myRegFile);
+	  //$dumpfile("test.vcd");
+	  //$dumpvars(0,myRegFile);
    end
 
 
