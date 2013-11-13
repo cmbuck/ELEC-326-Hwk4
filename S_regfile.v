@@ -41,7 +41,9 @@ module   DeMux_N_1bit(Select, inData, outData);
    
    always @(*)
    begin
-	outData = (inData << Select);
+	//outData = (inData << Select);
+	outData = 0;
+	outData[Select] = 1;
    end
    
 endmodule // DeMux_N_1bit
@@ -105,7 +107,7 @@ endmodule // Nbit_Reg
 
 
 
-module S_regFile(Clk, SrcRegA, SrcRegB, DestReg, WriteData, WE, DataA, DataB);
+module S_regFile(Clk, SrcRegA, SrcRegB, DestReg, WriteData, WE, DataA, DataB, regOutputs);
 
    input Clk;
    input [`MUX_CNTRL-1:0] SrcRegA, SrcRegB; 
@@ -136,7 +138,7 @@ module S_regFile(Clk, SrcRegA, SrcRegB, DestReg, WriteData, WE, DataA, DataB);
    ***********************************************************************************/ 
 	wire [`NUM_REGS-1:0] weDemuxed;
 	//wire [`REG_WIDTH-1:0] regOutputs[`NUM_REGS-1:0];
-	wire [`NUM_BITS-1:0] regOutputs;
+	output [`NUM_BITS-1:0] regOutputs;
 	
 	DeMux_N_1bit demux1(DestReg, WE, weDemuxed);
 	
@@ -145,8 +147,8 @@ module S_regFile(Clk, SrcRegA, SrcRegB, DestReg, WriteData, WE, DataA, DataB);
 	generate
 		for (i=0; i < `NUM_REGS; i = i + 1)
 		begin : regBank
-		//Nbit_Reg register(Clk, wEnable, WriteData, regOutputs[i]);
-		Nbit_Reg register(Clk, wEnable, WriteData, regOutputs[`REG_WIDTH * i +:`REG_WIDTH]);
+		//Nbit_Reg register(Clk, wEnable, WriteData, regOutputs[`REG_WIDTH * i +:`REG_WIDTH - 1]);
+		Nbit_Reg register(Clk, weDemuxed[i], WriteData, regOutputs[`REG_WIDTH * (i+1) - 1: `REG_WIDTH * i]);
 		end
 	endgenerate
 	

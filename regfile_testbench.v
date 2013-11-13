@@ -11,11 +11,12 @@ module processor_TestBench;
    reg [31:0] WriteData;
    reg 	RegWriteEnable;
    wire [31:0] ReadDataA, ReadDataB;
+   wire [32*32 -1:0] regOutputs;
    
    integer     i = 0, j = 0;
    
    
-   S_regFile  myRegFile(Clk, ReadRegisterA, ReadRegisterB, WriteRegister, WriteData, RegWriteEnable, ReadDataA, ReadDataB);
+   S_regFile  myRegFile(Clk, ReadRegisterA, ReadRegisterB, WriteRegister, WriteData, RegWriteEnable, ReadDataA, ReadDataB, regOutputs);
 
    initial begin
       Clk = 1;
@@ -25,6 +26,9 @@ module processor_TestBench;
       
       ReadRegisterA = 0;
       ReadRegisterB = `NUM_REGS-1;
+	  
+	  $dumpfile("test.vcd");
+	  $dumpvars(0,myRegFile);
    end
 
 
@@ -65,6 +69,7 @@ end
      begin
 	if ($time >=  640) RegWriteEnable = `FALSE;
 	if ($time >=  960) RegWriteEnable = `TRUE;
+
    end
 
 endmodule
